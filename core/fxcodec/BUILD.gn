@@ -1,0 +1,86 @@
+# Copyright 2018 The PDFium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../pdfium.gni")
+
+source_set("fxcodec") {
+  sources = [
+    "basic/basicmodule.cpp",
+    "basic/basicmodule.h",
+    "data_and_bytes_consumed.cpp",
+    "data_and_bytes_consumed.h",
+    "fax/faxmodule.cpp",
+    "fax/faxmodule.h",
+    "flate/flatemodule.cpp",
+    "flate/flatemodule.h",
+    "fx_codec.cpp",
+    "fx_codec.h",
+    "fx_codec_def.h",
+    "icc/icc_transform.cpp",
+    "icc/icc_transform.h",
+    "jbig2/jbig2_arith_decoder.cpp",
+    "jbig2/jbig2_arith_decoder.h",
+    "jbig2/jbig2_arith_int_decoder.cpp",
+    "jbig2/jbig2_arith_int_decoder.h",
+    "jbig2/jbig2_bit_stream.cpp",
+    "jbig2/jbig2_bit_stream.h",
+    "jbig2/jbig2_context.cpp",
+    "jbig2/jbig2_context.h",
+    "jbig2/jbig2_decoder.cpp",
+    "jbig2/jbig2_decoder.h",
+    "jbig2/jbig2_define.h",
+    "jbig2/jbig2_document_context.cpp",
+    "jbig2/jbig2_document_context.h",
+    "jbig2/jbig2_grd_proc.cpp",
+    "jbig2/jbig2_grd_proc.h",
+    "jbig2/jbig2_grrd_proc.cpp",
+    "jbig2/jbig2_grrd_proc.h",
+    "jbig2/jbig2_htrd_proc.cpp",
+    "jbig2/jbig2_htrd_proc.h",
+    "jbig2/jbig2_huffman_decoder.cpp",
+    "jbig2/jbig2_huffman_decoder.h",
+    "jbig2/jbig2_huffman_table.cpp",
+    "jbig2/jbig2_huffman_table.h",
+    "jbig2/jbig2_image.cpp",
+    "jbig2/jbig2_image.h",
+    "jbig2/jbig2_page.h",
+    "jbig2/jbig2_pattern_dict.cpp",
+    "jbig2/jbig2_pattern_dict.h",
+    "jbig2/jbig2_pdd_proc.cpp",
+    "jbig2/jbig2_pdd_proc.h",
+    "jbig2/jbig2_sdd_proc.cpp",
+    "jbig2/jbig2_sdd_proc.h",
+    "jbig2/jbig2_segment.cpp",
+    "jbig2/jbig2_segment.h",
+    "jbig2/jbig2_symbol_dict.cpp",
+    "jbig2/jbig2_symbol_dict.h",
+    "jbig2/jbig2_trd_proc.cpp",
+    "jbig2/jbig2_trd_proc.h",
+    "jpeg/jpeg_common.c",
+    "jpeg/jpeg_common.h",
+    "jpeg/jpegmodule.cpp",
+    "jpeg/jpegmodule.h",
+    "jpx/cjpx_decoder.cpp",
+    "jpx/cjpx_decoder.h",
+    "jpx/jpx_decode_utils.cpp",
+    "jpx/jpx_decode_utils.h",
+    "scanlinedecoder.cpp",
+    "scanlinedecoder.h",
+  ]
+  configs += [
+    "../../:pdfium_strict_config",
+    "../../:pdfium_noshorten_config",
+  ]
+  public_deps = [ "../fxcrt" ]
+  deps = [
+    "../../third_party:lcms2",
+    "../../third_party:libopenjpeg2",
+    "../../third_party:zlib",
+    "../fxge",
+    "//third_party:jpeg",
+  ]
+  defines = []
+
+  visibility = [ "../../*" ]
+}

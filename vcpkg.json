@@ -1,0 +1,26 @@
+{
+  "name": "pdfium",
+  "version": "0.1.0",
+  "description": "PDFium built with CMake + Clang",
+  "homepage": "https://pdfium.googlesource.com/pdfium/",
+  "dependencies": [
+    {
+      "name": "icu",
+      "features": ["tools"]
+    },
+    "harfbuzz",
+    {
+      "name": "abseil",
+      "default-features": false,
+      "features": ["container", "hash", "strings", "synchronization", "time"]
+    },
+    "libjpeg-turbo"
+  ],
+  "builtin-baseline": "c85f932b272ac0eaa6c92e161227e4ae5f523472",
+  "overrides": [
+    { "name": "icu", "version": "74.2" },
+    { "name": "harfbuzz", "version": "8.2.2" },
+    { "name": "abseil", "version": "20240116.2" },
+    { "name": "libjpeg-turbo", "version": "3.0.1" }
+  ]
+}
