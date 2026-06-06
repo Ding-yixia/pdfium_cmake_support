@@ -3,8 +3,9 @@
 PDFium Build Script — CMake + Clang + vcpkg
 
 Usage:
-  python build.py                           # Configure + Build (Release)
+  python build.py                           # Configure + Build (Release, Ninja)
   python build.py --debug --examples        # Debug build with examples
+  python build.py --vs                      # Generate Visual Studio solution
   python build.py --clean                   # Clean rebuild
   python build.py --no-build                # Configure only
   python build.py --install-deps            # Install vcpkg dependencies
@@ -276,40 +277,59 @@ def freeze_deps():
 def configure(tools, args):
     step("Configuring CMake")
 
+    generator = "Visual Studio 17 2022" if args.vs else "Ninja"
+    build_suffix = "-vs" if args.vs else ""
+    actual_build_dir = SCRIPT_DIR / "build" / f"cmake_build{build_suffix}"
+
     cmake_args = [
         posix(tools["cmake"]),
         "-S", posix(SCRIPT_DIR),
-        "-B", posix(BUILD_DIR),
-        "-G", "Ninja",
-        f"-DCMAKE_C_COMPILER={posix(tools['clang'])}",
-        f"-DCMAKE_CXX_COMPILER={posix(tools['clang'])}",
-        f"-DCMAKE_MAKE_PROGRAM={posix(tools['ninja'])}",
+        "-B", posix(actual_build_dir),
+        "-G", generator,
+    ]
+
+    # Ninja uses clang-cl directly; VS uses the built-in Clang/ClangCL toolset
+    if not args.vs:
+        cmake_args += [
+            f"-DCMAKE_C_COMPILER={posix(tools['clang'])}",
+            f"-DCMAKE_CXX_COMPILER={posix(tools['clang'])}",
+            f"-DCMAKE_MAKE_PROGRAM={posix(tools['ninja'])}",
+        ]
+        if tools.get("rc"):
+            cmake_args.append(f"-DCMAKE_RC_COMPILER={posix(tools['rc'])}")
+        if tools.get("lib"):
+            cmake_args.append(f"-DCMAKE_AR={posix(tools['lib'])}")
+    else:
+        # VS generator: use ClangCL toolset (requires VS with Clang components)
+        cmake_args += ["-T", "ClangCL"]
+
+    cmake_args += [
         f"-DCMAKE_BUILD_TYPE={'Debug' if args.debug else 'Release'}",
     ]
-    if tools.get("rc"):
-        cmake_args.append(f"-DCMAKE_RC_COMPILER={posix(tools['rc'])}")
-    if tools.get("lib"):
-        cmake_args.append(f"-DCMAKE_AR={posix(tools['lib'])}")
+
     if args.examples:
         cmake_args.append("-DPDFIUM_BUILD_EXAMPLES=ON")
 
-    print(f"  Source:   {SCRIPT_DIR}")
-    print(f"  Build:    {BUILD_DIR}")
-    print(f"  Config:   {'Debug' if args.debug else 'Release'}")
-    print(f"  Toolchain: Clang {tools['clang'].parent}")
+    print(f"  Source:    {SCRIPT_DIR}")
+    print(f"  Build:     {actual_build_dir}")
+    print(f"  Generator: {generator}")
+    print(f"  Config:    {'Debug' if args.debug else 'Release'}")
+    if not args.vs:
+        print(f"  Toolchain: Clang {tools['clang'].parent}")
     print()
 
     run(cmake_args)
+    return actual_build_dir
 
 
-def build(tools, args):
+def build(tools, args, build_dir):
     step("Building")
     parallel = args.jobs or os.cpu_count() or 4
-    run([posix(tools["cmake"]), "--build", posix(BUILD_DIR), "--parallel", str(parallel)])
+    run([posix(tools["cmake"]), "--build", posix(build_dir), "--parallel", str(parallel)])
 
     step("Build successful")
-    if (BUILD_DIR / "bin").exists():
-        for f in sorted((BUILD_DIR / "bin").iterdir()):
+    if (build_dir / "bin").exists():
+        for f in sorted((build_dir / "bin").iterdir()):
             sz = f.stat().st_size
             label = f"{sz/(1024*1024):.1f} MB" if sz > 1e6 else f"{sz/1024:.1f} KB"
             print(f"  {f.name:30s} {label}")
@@ -328,6 +348,7 @@ def main():
     parser.add_argument("--clean",     action="store_true", help="Clean build dir first")
     parser.add_argument("--no-build",  action="store_true", help="Configure only")
     parser.add_argument("--examples",  action="store_true", help="Build examples")
+    parser.add_argument("--vs",        action="store_true", help="Generate Visual Studio 2022 solution instead of Ninja")
     parser.add_argument("-j", "--jobs", type=int, default=0,  help="Parallel build jobs")
     parser.add_argument("--install-deps", action="store_true", help="Install vcpkg deps")
     parser.add_argument("--freeze-deps",  action="store_true", help="Freeze vcpkg → deps/")
@@ -356,10 +377,10 @@ def main():
              "  Or:   python build.py --install-deps")
 
     tools = detect_tools()
-    configure(tools, args)
+    actual_build_dir = configure(tools, args)
 
     if not args.no_build:
-        build(tools, args)
+        build(tools, args, actual_build_dir)
 
 
 if __name__ == "__main__":

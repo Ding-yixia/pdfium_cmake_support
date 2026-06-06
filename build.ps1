@@ -4,14 +4,19 @@ param(
     [switch]$Clean,
     [switch]$NoBuild,
     [switch]$Examples,
+    [switch]$UseVS,
     [int]$Parallel = (Get-CimInstance -ClassName Win32_ComputerSystem).NumberOfLogicalProcessors
 )
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $BuildDir = "$ScriptDir\build\cmake_build"
 $DepsDir = "$ScriptDir\deps"
-$ToolDir = "$DepsDir\tools\bin"
+$ToolDir = "$DepsDir\bin"
 $Generator = "Ninja"
+if ($UseVS) {
+    $Generator = "Visual Studio 17 2022"
+    $BuildDir = "$ScriptDir\build\cmake_build-vs"
+}
 
 # Use system Clang (LLVM) - more compatible than bundled Chromium Clang
 $ClangDir = "C:/Program Files/LLVM/bin"
@@ -74,13 +79,20 @@ $ConfigureArgs = @(
     "-S", $ScriptDir
     "-B", $BuildDir
     "-G", $Generator
-    "-DCMAKE_C_COMPILER=$ClangC"
-    "-DCMAKE_CXX_COMPILER=$ClangCXX"
-    "-DCMAKE_RC_COMPILER=$LlvmRc"
-    "-DCMAKE_MAKE_PROGRAM=$NinjaPath"
-    "-DCMAKE_AR=$LlvmLib"
-    "-DCMAKE_BUILD_TYPE=$Config"
-) + $ExtraArgs
+)
+if ($UseVS) {
+    $ConfigureArgs += @("-T", "ClangCL")
+} else {
+    $ConfigureArgs += @(
+        "-DCMAKE_C_COMPILER=$ClangC"
+        "-DCMAKE_CXX_COMPILER=$ClangCXX"
+        "-DCMAKE_RC_COMPILER=$LlvmRc"
+        "-DCMAKE_MAKE_PROGRAM=$NinjaPath"
+        "-DCMAKE_AR=$LlvmLib"
+    )
+}
+$ConfigureArgs += "-DCMAKE_BUILD_TYPE=$Config"
+$ConfigureArgs += $ExtraArgs
 
 $cmake = Get-Command cmake -ErrorAction SilentlyContinue
 if (-not $cmake) {
