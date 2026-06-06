@@ -357,9 +357,9 @@ copies or substantial portions of the Software.
 > *Thank you for your interest. Code becomes beautiful through sharing, strong through community.*
 > *If this project has helped you, feel free to buy me a coffee ☕*
 
-| 中文收款码 | 
-|:---------:|
-| ![support_me_work.png](image/support_me_work.png) |
+| ![支付宝](image/alipay.png) | ![微信支付](image/wechat.png) |
+|:---:|:---:|
+| **支付宝** | **微信支付** |
 
 ### 🌍 世界语言感谢 / Thank You in Many Languages
 
