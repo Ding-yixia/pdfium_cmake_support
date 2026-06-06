@@ -337,6 +337,12 @@ copies or substantial portions of the Software.
 >
 > **"The lamp is not for itself; it gives light to others"** — *Rumi*
 >
+> **"How far that little candle throws his beams! So shines a good deed in a naughty world"** — *William Shakespeare, The Merchant of Venice*
+>
+> **"It is more blessed to give than to receive"** — *Acts 20:35*
+>
+> **"Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver"** — *2 Corinthians 9:7*
+>
 > **"The best way to find yourself is to lose yourself in the service of others"** — *Mahatma Gandhi*
 >
 > **"継続は力なり"** — *日本の諺*
