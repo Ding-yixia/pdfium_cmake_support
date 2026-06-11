@@ -9,18 +9,14 @@
       "features": ["tools"]
     },
     "harfbuzz",
-    {
-      "name": "abseil",
-      "default-features": false,
-      "features": ["container", "hash", "strings", "synchronization", "time"]
-    },
+    "abseil",
     "libjpeg-turbo"
   ],
-  "builtin-baseline": "c85f932b272ac0eaa6c92e161227e4ae5f523472",
+  "builtin-baseline": "06a7fdd564234908731c59ac46a624f808e87b1c",
   "overrides": [
-    { "name": "icu", "version": "74.2" },
-    { "name": "harfbuzz", "version": "8.2.2" },
-    { "name": "abseil", "version": "20240116.2" },
-    { "name": "libjpeg-turbo", "version": "3.0.1" }
+    { "name": "icu", "version": "78.3" },
+    { "name": "harfbuzz", "version": "14.2.1" },
+    { "name": "abseil", "version": "20260107.1" },
+    { "name": "libjpeg-turbo", "version": "3.1.4.1" }
   ]
 }

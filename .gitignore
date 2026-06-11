@@ -1,6 +1,8 @@
 # ── Build output ──
 build/
 !build/*.ps1
+!build/build_config.h
+!build/buildflag.h
 
 # ── IDE / Editor ──
 .vscode/
